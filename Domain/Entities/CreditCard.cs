@@ -9,7 +9,15 @@ public sealed class CreditCard : Entity
     public bool IsActive { get; private set; }
     public decimal? Limit { get; private set; }
 
-    public CreditCard(string lastFourDigits, string cardHolderName, DateTime expirationDate, bool isActive, decimal? limit = null, string? description = null)
+    public CreditCard
+    (
+        string lastFourDigits,
+        string cardHolderName,
+        DateTime expirationDate,
+        bool isActive,
+        decimal? limit = null,
+        string? description = null
+    )
     {
         LastFourDigits = lastFourDigits;
         CardHolderName = cardHolderName;
