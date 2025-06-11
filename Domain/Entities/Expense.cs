@@ -1,5 +1,4 @@
 ﻿using Domain.ValueObjects;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Domain.Entities;
 
@@ -7,11 +6,13 @@ public class Expense : Transaction
 {
     public bool IsPaid { get; private set; }
     public ICollection<Installment> Installments { get; private set; }
+    public ICollection<ExpenseCategory> Categories { get; private set; } = [];
 
-    public Expense(DateTime transactionDate, Money amount, bool isPaid, ICollection<Installment> installments, string? description = null)
+    public Expense(DateTime transactionDate, Money amount, bool isPaid, ICollection<Installment> installments, ICollection<ExpenseCategory> categories, string? description = null)
         : base(transactionDate, amount, description)
     {
         IsPaid = isPaid;
+        Categories = categories ?? [];
         Installments = installments ?? [];
     }
 
@@ -31,11 +32,38 @@ public class Expense : Transaction
         Installments.Add(installment);
     }
 
-    public void UpdateExpense(Money amount, string description, DateTime date)
+    public void RemoveInstallment(Installment installment)
+    {
+        if (!Installments.Contains(installment))
+        {
+            throw new InvalidOperationException("Installment does not exist in the expense.");
+        }
+        Installments.Remove(installment);
+    }
+
+    public void AddCategory(ExpenseCategory category)
+    {
+        if (Categories.Contains(category))
+        {
+            throw new InvalidOperationException("Category already exists in the expense.");
+        }
+        Categories.Add(category);
+    }
+
+    public void RemoveCategory(ExpenseCategory category)
+    {
+        if (!Categories.Contains(category))
+        {
+            throw new InvalidOperationException("Category does not exist in the expense.");
+        }
+        Categories.Remove(category);
+    }
+
+    public void UpdateExpense(Money amount, bool isPaid, string? description = null)
     {
         Amount = amount;
+        IsPaid = isPaid;
         Description = description;
-        TransactionDate = date;
         UpdatedAt = DateTime.UtcNow;
     }
 }
